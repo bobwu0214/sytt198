@@ -49,8 +49,8 @@ function renderSettings(){
 function renderGeometry(){
   const p=current();$('modelName').textContent=p?p.name:'模型预览';$('modelSub').textContent=p?`${p.demo?'示例模型 · ':''}${fmt(p.stats.triangles,0)} 个三角形 · 本地解析`:'上传模型，开始分析';
   $('modelTag').textContent=p?(p.demo?'DEMO':p.isStep?'STEP':'STL'):'THREE.JS';
-  $('dimensions').textContent=p?p.stats.size.map(n=>fmt(n,1)).join(' × '):'—';$('volume').textContent=p?fmt(p.stats.volume):'—';$('area').textContent=p?fmt(p.stats.area):'—';
-  $('meshStatus').textContent=p?(p.stats.closed?'● 闭合网格 · 体积为估算':`△ 网格待检查 · ${p.stats.badEdges} 条异常边`):'等待模型';
+  $('dimensions').textContent=p?p.stats.size.map(n=>fmt(n,1)).join(' × '):'—';$('volume').textContent=p?(p.stats.orientationAmbiguous?'待确认':fmt(p.stats.volume)):'—';$('area').textContent=p?fmt(p.stats.area):'—';
+  $('meshStatus').textContent=p?(p.stats.orientationAmbiguous?'△ 多壳体朝向混合 · 请确认体积':p.stats.closed?'● 闭合网格 · 体积为估算':`△ 网格待检查 · ${p.stats.badEdges} 条异常边`):'等待模型';
   $('meshStatus').style.color=p?(p.stats.closed?'var(--sm-success)':'var(--sm-danger)'):'';$('unit').value=p?.scale||1;$('unit').disabled=!p||p.isStep||p.demo;
   viewer?.show(p?.geometries||[],p?.scale||1);
 }

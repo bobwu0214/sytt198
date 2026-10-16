@@ -31,13 +31,13 @@ export function calculatePart(p) {
   }
   const consumedVolume=(printVolume+(p.support??0))*(1+p.loss/100);
   const weight=overridden?p.weightOverride:consumedVolume*p.density;
-  const material=cents(weight/1000*p.price);
+  const rawMaterial=weight/1000*p.price,material=cents(rawMaterial),rowMaterial=cents(rawMaterial*p.quantity);
   const rowHours=supplied(p.rowHours)?p.rowHours:(p.hours??0)*p.quantity;
   const machine=cents(rowHours*p.hourRate);
-  const cost=cents(material*p.quantity+machine+p.post*p.quantity+p.setup);
+  const cost=cents(rowMaterial+machine+p.post*p.quantity+p.setup);
   const beforeMinimum=cents(cost*(1+p.markup/100));
-  const sale=Math.max(beforeMinimum,p.minimum);
-  return {weight,consumedVolume:weight/p.density,solidWeight:volume*p.density,printVolume,material,machine,cost,sale,unit:cents(sale/p.quantity),rowHours,minimumAdjustment:cents(sale-beforeMinimum),warnings,ready:!warnings.length};
+  const sale=cents(Math.max(beforeMinimum,p.minimum));
+  return {weight,consumedVolume:weight/p.density,solidWeight:volume*p.density,printVolume,material,rowMaterial,machine,cost,sale,unit:cents(sale/p.quantity),rowHours,minimumAdjustment:cents(sale-beforeMinimum),warnings,ready:!warnings.length};
 }
 export function calculateOrder(rows,{shipping=0,discount=0,tax=0}={}) {
   number(shipping,'运费');number(discount,'优惠');number(tax,'税率',100);
